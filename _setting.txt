@@ -1,2 +1,2 @@
-base_dir = /Users/igwanghyeon/Library/Mobile Documents/com~apple~CloudDocs/KH's Container/Kaboratory/Kynance
-data_dir = 
+base_dir = /Users/sinjiyoung/
+data_dir = /Users/sinjiyoung/Documents/kaist/digger_finance

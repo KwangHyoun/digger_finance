@@ -2,6 +2,8 @@ from _setting import setting
 import pandas as pd
 import time
 from enum import Enum
+import pickle
+
 
 
 # Enum Class 상속 받을 경우 생성자 사용 불가능
@@ -12,10 +14,9 @@ def dropComma(df):
     return df.apply(lambda row: row.astype('str').str.replace(',','')).astype('float')
 
     
-    
 class PackInfo_DataGuide():
     class PRP(Enum): # Price Related Pack
-        directory = base_dir+'/data/DATA/DataGuide/PriceRelated.pkl'
+        directory = setting['data_dir']+'/price_pack.pkl'
         price_open = '수정시가(원)'
         price_high = '수정고가(원)'
         price_low = '수정저가(원)'
@@ -33,7 +34,7 @@ class PackInfo_DataGuide():
         vold_52w = '변동성 (52주)'
         
     class MP(Enum): # Market Pack
-        directory = base_dir+'/data/DATA/DataGuide/Market.pkl'
+        directory = setting['data_dir']+'/market_pack.pkl'
         kospi_open = '시가지수(포인트)'
         kodaq_open = '시가지수(포인트)'
         kospi_high = '고가지수(포인트)'
@@ -47,7 +48,7 @@ class PackInfo_DataGuide():
         # market_open = None
         
     class SDP(Enum): # Supply and Demand Pack
-        directory = base_dir+'/data/DATA/DataGuide/SupplyDemand.pkl'
+        directory = setting['data_dir']+'/liquidity_pack.pkl'
         inst_sell = '매도대금(기관계)(만원)'
         inst_buy = '매수대금(기관계)(만원)'
         inst = '순매수대금(기관계)(만원)'
@@ -81,6 +82,9 @@ class DataGuideData(PackInfo_DataGuide):
         self.QD = None # Parsing 대상이 되는 전체 Raw Data - Quality
         self.monthly_return = None
         self.monthly_return_ie = None
+
+        print('Reading Begin...')
+        
         self._read() # Read data 
         self._unpack() # Unpack files
         
@@ -91,9 +95,9 @@ class DataGuideData(PackInfo_DataGuide):
     def _read(self):
         print('File loading... ', end='')
         start = time.time()
-        self.PRD = dropComma(pd.read_pickle(self.Pack.PRP.directory.value))
-        self.MD = dropComma(pd.read_pickle(self.Pack.MP.directory.value))
-        self.SDD = dropComma(pd.read_pickle(self.Pack.SDP.directory.value))
+        self.PRD = pd.read_pickle(self.Pack.PRP.directory.value)
+        self.MD = pd.read_pickle(self.Pack.MP.directory.value)
+        # self.SDD = dropComma(pd.read_pickle(self.Pack.SDP.directory.value))
         # self.QD = pd.read_pickle(self.PackInfo.QP.directory.value)
         print('complete!!', time.time()-start, 'sec')
               
@@ -105,12 +109,12 @@ class DataGuideData(PackInfo_DataGuide):
         for i, component in enumerate(self.Pack.PRP):
             if component.name == 'directory': continue
             component._value_ = self.PRD.xs(tuple(self.Pack.PRP)[i].value, level=1, axis=1)
-
+        '''
         # SUPPLY&DEMAND UNPACK
         for i, component in enumerate(self.Pack.SDP):
             if component.name == 'directory': continue
             component._value_ = self.SDD.xs(tuple(self.Pack.SDP)[i].value, level=1, axis=1)
-        
+        '''
         # MARKET DATA UNPACK
         for i, component in enumerate(self.Pack.MP):
             if component.name == 'directory': continue
@@ -131,6 +135,6 @@ class DataGuideData(PackInfo_DataGuide):
     def _updateData(self):
         pass
     
-
+print('??????')
 _DT = DataGuideData()
 pack = _DT.Pack
