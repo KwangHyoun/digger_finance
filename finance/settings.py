@@ -32,6 +32,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'pjt',
+    # 'chartit',
+    # 'pjt.apps.PjtConfig',
 
     'django.contrib.admin',
     'django.contrib.auth',
